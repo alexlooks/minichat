@@ -1,0 +1,35 @@
+page {
+    padding-bottom: 100rpx;
+}
+
+.cu-chat .cu-info {
+    max-width: 570rpx;
+}
+
+/* 聊天气泡 */
+.cu-chat .cu-item {
+    padding: 10rpx 10rpx 60rpx;
+}
+
+.cu-chat .cu-item .date {
+    width: 490rpx;
+    left: 130rpx;
+}
+
+/* 表情面板 */
+.sticker-panel {
+    padding-top: 28rpx;
+    padding-left: 28rpx;
+    width: 710rpx;
+    height: 300rpx;
+    position: fixed;
+    bottom: 0;
+    overflow-y: scroll;
+    padding-bottom: 30rpx;
+}
+
+.sticker {
+    width: 50rpx;
+    height: 50rpx;
+    margin: 6rpx;
+}
