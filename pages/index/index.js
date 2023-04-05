@@ -148,7 +148,7 @@ Page({
       let _this = this;
       console.log("chat_engine:" + _this.data.chat_engine)
       let response = await this.request({
-        url: `${http_protocol}://${hostname}/release/test`,
+        url: `${http_protocol}://${hostname}/release/chat`,
         method: "POST",
         header: {
             "Content-Type": "application/json"
@@ -181,7 +181,7 @@ Page({
           notice: cc,
       })
         let response = await this.request({
-            url: `${http_protocol}://${hostname}/release/test`,
+            url: `${http_protocol}://${hostname}/release/chat`,
             method: "POST",
             header: {
                 "Content-Type": "application/json"
