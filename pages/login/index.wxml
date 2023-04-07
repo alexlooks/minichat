@@ -1,0 +1,8 @@
+<!--index.wxml-->
+<cu-custom bgColor="bg-gradual-blue">
+    <view slot="backText">小量智能助理</view>
+</cu-custom>
+<view class="cu-chat" id="page">
+<image mode="aspectFit"  src="/static/images/cat.png" />
+<button class="btn" open-type="getUserInfo" bindgetuserinfo="getUserInfo">登录小量</button>
+</view>

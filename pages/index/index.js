@@ -7,7 +7,7 @@ var socket = null;
 //=====================================
 var service_end = true;
 
-const hostname = "YOU SERVER";
+const hostname = "service-el8coz1d-1254100551.cd.apigw.tencentcs.com";
 const http_protocol = "https";
 const http_port = "443";
 const socket_protocol = "ws";
@@ -22,7 +22,7 @@ Page({
 
         messageList: [],
         notice: "",
-
+        bt_send_txt:"发送",
         chat_engine:"GTP",
 
         myAvatar: "http://api.btstu.cn/sjtx/api.php?lx=c1&format=images&method=mobile",
@@ -31,7 +31,18 @@ Page({
         openStickerPanel: false,
     },
     onLoad() {
-        this.connect();
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      })
+      if (!wx.getStorageSync("token")) {
+        //没有token  进入登陆页面
+        wx.redirectTo({
+          url: "/pages/login/index"
+        });
+        return;
+      }      
+      this.connect();
     },
     InputFocus(e) {
         this.setData({
@@ -54,10 +65,18 @@ Page({
             message: this.data.content,
         });
     },
+    setSendButtonEnable(flag){
+      this.setData({
+        bt_send_txt:flag?"发送":"等待"
+      })
+    },
     sendMsg() {
         if (!this.data.content) return;
+        console.log("sending_status = " + wx.getStorageSync("sending_status"))
+        if(wx.getStorageSync("sending_status")) return;
+        wx.setStorageSync('sending_status', true)
+        this.setSendButtonEnable(false)
         console.log('发送消息:' + this.data.content);
-
         if(this.data.content.startsWith("#bing")){
           this.setData({
             chat_engine: "EDGE",
@@ -148,31 +167,48 @@ Page({
       let _this = this;
       console.log("chat_engine:" + _this.data.chat_engine)
       let response = await this.request({
-        url: `${http_protocol}://${hostname}/release/chat`,
+        url: `${http_protocol}://${hostname}/api/chat`,
         method: "POST",
         header: {
             "Content-Type": "application/json"
         },
-        data: {"data":msg,"request_engeine":_this.data.chat_engine},
-    });
-    console.log(response.data['response']);
-    let data = {
-      "message":response.data['response'],
-      "calltype":"呼出",
-      "msgtype":"text"
-    };
-    console.log(_this.data.messageList);
-    let messageList = _this.data.messageList;
-    messageList[messageList.length] = data;
-    console.log(messageList);
-    _this.setData({
-      messageList: messageList,
-    }) ;  
-    _this.pageScrollToBottom(); 
+        data: {"data":msg,"request_engeine":_this.data.chat_engine,"openid":wx.getStorageSync('openid')},
+      });
+      console.log(response.data);
+      let data = {
+
+      }
+      wx.setStorageSync('sending_status', false)
+      this.setSendButtonEnable(true)
+      if(response.data.code * 1 == 401 || response.data.code * 1 == 403){
+        data = {
+          "message":'无法连接服务器 - 未授权',
+          "calltype":"呼出",
+          "msgtype":"text"
+        };
+      }
+      else{
+        data = {
+          "message":response.data['response'],
+          "calltype":"呼出",
+          "msgtype":"text"
+        };
+      }
+
+      console.log(_this.data.messageList);
+      let messageList = _this.data.messageList;
+      messageList[messageList.length - 1] = data;
+      console.log(messageList);
+      _this.setData({
+        messageList: messageList,
+      }) ;  
+      _this.pageScrollToBottom(); 
     },
      
     async connect() {
         let _this = this;
+        wx.setStorageSync('sending_status', false)
+        this.setSendButtonEnable(true)
         let cc = {
           "message":"正在连接后台服务，请稍后...",
           "messageType":"message"
@@ -181,106 +217,34 @@ Page({
           notice: cc,
       })
         let response = await this.request({
-            url: `${http_protocol}://${hostname}/release/chat`,
+            url: `${http_protocol}://${hostname}/api/chat`,
             method: "POST",
             header: {
                 "Content-Type": "application/json"
             },
-            data: {"data":"你好"},
+            data: {"data":"你好","openid":wx.getStorageSync('openid')}
         })
-        console.log(response.data['response']);
+        console.log(response.data);
         let vnotice = {
-          "message":"已经连接至 - " + this.data.chat_engine,
-          "messageType":"message"
+
         }
+        if(response.data.code * 1 == 401 || response.data.code * 1 == 403){
+          vnotice = {
+            "message":"无法连接服务器 - 未授权",
+            "messageType":"message"
+          }
+          wx.setStorageSync('token', null)
+        }
+        else{
+          vnotice = {
+            "message":"已经连接至 - " + this.data.chat_engine,
+            "messageType":"message"
+          }
+        }
+
         this.setData({
             notice: vnotice,
         })
-/*
-        socket = io(
-            `${socket_protocol}://${hostname}:${socket_port}/im/user?userid=${userid}&name=${name}&nickname=${name}&orgi=${orgi}&session=${sessionid}&appid=${appid}`, {
-                transports: ['websocket']
-            }
-        );
-
-        socket.on('connect', function () {
-            //console.log("on connect ...");
-            //提交详细资料
-            // socket.emit('new', {
-            //     name: "张三",
-            //     phone: "15200004793",
-            //     email: "123@qq.com",
-            //     memo: "测试微信小程序连接春松客服",
-            //     orgi: `${orgi}`,
-            //     appid: `${appid}`
-            // });
-        })
-        socket.on("agentstatus", function (data) {
-            //console.log("agentstatus", data);
-        })
-        socket.on("status", function (data) {
-            //console.log("[status]", data);
-
-            if (data.messageType == "end") {
-                service_end = true;
-                _this.setData({
-                    notice: data
-                })
-
-            } else if (data.messageType == "text") {
-                service_end = false;
-                //console.log(data.message);
-                _this.setData({
-                    notice: data
-                })
-            } else if (data.messageType == "message" && !data.noagent) {
-                // 服务恢复
-                service_end = false;
-                //console.log(data.message);
-                _this.setData({
-                    notice: data
-                })
-            }
-        })
-        socket.on('message', function (data) {
-            //console.log("on message", data);
-            //处理时间
-            data.createtime = dayjs(data.createtime).format('MM-DD HH:mm:ss');
-            //处理表情
-            data.message = data.message.replaceAll(
-                "src='/im/js/kindeditor/plugins/emoticons/images/",
-                `src='${http_protocol}://${hostname}:${http_port}/im/js/kindeditor/plugins/emoticons/images/`
-            );
-            _this.setData({
-                messageList: [..._this.data.messageList, ...[data]],
-            })
-            if (data.msgtype == "image") {} else if (data.msgtype == "file") {}
-            if (data.calltype == "呼入") {
-
-            } else if (data.calltype == "呼出") {
-                let context = wx.createInnerAudioContext();
-                context.autoplay = true;
-                context.src = "/utils/14039.mp3";
-                context.onPlay(() => {
-                    //console.log("play");
-                });
-                context.onError((res) => { //打印错误
-                    console.log(res.errMsg); //错误信息
-                    console.log(res.errCode); //错误码
-                })
-                context.play();
-            }
-            _this.pageScrollToBottom();
-        });
-
-        socket.on('disconnect', function (error) {
-            console.log('连接失败', error);
-        });
-
-        socket.on('satisfaction', function () {
-            console.log("[satisfaction]");
-        });
-        */
     },
 
     request: (options) => {

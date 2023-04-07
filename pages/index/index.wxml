@@ -1,7 +1,3 @@
-<!-- <cu-custom bgColor="bg-gradual-pink" isBack="{{true}}">
-    <view slot="backText">返回</view>
-    <view slot="content">聊天</view>
-</cu-custom> -->
 <view class="cu-chat" id="page">
     <view class="cu-info round" wx:if="{{notice!=''}}">
         <rich-text user-select="true" nodes="{{notice.message}}"></rich-text>
@@ -38,7 +34,7 @@
     <view class="action" bindtap="switchStickerPanel">
         <text class="cuIcon-emojifill text-grey"></text>
     </view>
-    <button class="cu-btn bg-green shadow" bindtap="sendMsg">发送</button>
+    <button class="cu-btn bg-green shadow" bindtap="sendMsg">{{bt_send_txt}}</button>
 </view>
 
 <view class="sticker-panel" wx:if="{{openStickerPanel}}">
