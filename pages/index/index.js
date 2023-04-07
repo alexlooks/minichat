@@ -7,7 +7,7 @@ var socket = null;
 //=====================================
 var service_end = true;
 
-const hostname = "service-el8coz1d-1254100551.cd.apigw.tencentcs.com";
+const hostname = "<NODEJS SERVER>";
 const http_protocol = "https";
 const http_port = "443";
 const socket_protocol = "ws";
