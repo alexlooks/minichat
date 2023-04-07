@@ -7,7 +7,7 @@ var socket = null;
 //=====================================
 var service_end = true;
 
-const hostname = "<NODEJS SERVER>";
+const hostname = "service-el8coz1d-1254100551.cd.apigw.tencentcs.com";
 const http_protocol = "https";
 const http_port = "443";
 const socket_protocol = "ws";
@@ -104,6 +104,8 @@ Page({
             content: "",
             openStickerPanel: false,
           })
+          wx.setStorageSync('sending_status', false)
+          this.setSendButtonEnable(true)
           return
         }else if(this.data.content.startsWith("#gtp")){
           this.setData({
@@ -132,6 +134,8 @@ Page({
             content: "",
             openStickerPanel: false,
           })       
+          wx.setStorageSync('sending_status', false)
+          this.setSendButtonEnable(true)
           return            
         }
 
