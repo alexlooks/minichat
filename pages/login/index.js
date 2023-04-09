@@ -12,6 +12,7 @@ Page({
   },
 
   onShow(){
+    wx.hideHomeButton();
     app.login().then((res) => {
       console.log(res)
       app.globalData.code = res;

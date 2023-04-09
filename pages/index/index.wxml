@@ -1,4 +1,6 @@
 <view class="cu-chat" id="page">
+
+    
     <view class="cu-info round" wx:if="{{notice!=''}}">
         <rich-text user-select="true" nodes="{{notice.message}}"></rich-text>
     </view>
@@ -37,8 +39,10 @@
     <button class="cu-btn bg-green shadow" bindtap="sendMsg">{{bt_send_txt}}</button>
 </view>
 
-<view class="sticker-panel" wx:if="{{openStickerPanel}}">
-    <image class="sticker" wx:for="{{79}}" wx:key="index" bindtap="chooseSticker" data-idx="{{index}}"
-        src="{{config.schema}}://{{config.hostname}}:{{config.port}}/js/kindeditor/plugins/emoticons/images/{{index}}.gif">
-    </image>
+<view class="sticker-panel" wx:if="{{openStickerPanel}}" style="background-color:white;width: 100%;height: 20%;">
+  <button class="cu-btn bg-blue shadow" style="margin-right:20px;margin-top: 20px;" data-key="#RESET#" bindtap="sendMsg">重置上下文</button>
+  <button class="cu-btn bg-blue shadow" style="margin-right:20px;margin-top: 20px;" data-key="#gtp" bindtap="sendMsg">切换GTP</button> 
+  <button class="cu-btn bg-blue shadow" style="margin-right:20px;margin-top: 20px;" data-key="#bing" bindtap="sendMsg">切换Bing</button> 
+  <button class="cu-btn bg-yellow shadow" style="margin-right:20px;margin-top: 20px;" data-key="#eligibility" bindtap="sendMsg">申请资格</button> 
+  <button class="cu-btn bg-yellow shadow" style="margin-right:20px;margin-top: 20px;" data-key="#exit" bindtap="exit">退出登录</button> 
 </view>

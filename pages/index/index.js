@@ -7,7 +7,7 @@ var socket = null;
 //=====================================
 var service_end = true;
 
-const hostname = "service-el8coz1d-1254100551.cd.apigw.tencentcs.com";
+const hostname = "<YOUR HOST>";
 const http_protocol = "https";
 const http_port = "443";
 const socket_protocol = "ws";
@@ -70,6 +70,7 @@ Page({
         bt_send_txt:flag?"发送":"等待"
       })
     },
+    
     sendMsg() {
         if (!this.data.content) return;
         console.log("sending_status = " + wx.getStorageSync("sending_status"))
